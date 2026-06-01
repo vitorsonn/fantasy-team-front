@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FantasyTeam } from '../../services/fantasy-team';
 
 
@@ -16,7 +16,7 @@ export class Market implements OnInit {
   public searchText: string = '';
   public itemsToShow: number = 20
 
-  constructor(private fantasyService: FantasyTeam) {}
+  constructor(private fantasyService: FantasyTeam, private cdRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadMarketData();
@@ -27,6 +27,7 @@ export class Market implements OnInit {
     this.fantasyService.getMarketTeams().subscribe({
       next: (data) => {
         this.teams = data;
+        this.cdRef.detectChanges(); // Força a atualização da view após carregar os dados`
       },
       error: (err) => console.error('Erro ao carregar mercado', err)
     });
@@ -36,6 +37,8 @@ export class Market implements OnInit {
     this.fantasyService.getMyTeamDetails(1).subscribe({
       next: (data) => {
         this.myTeam = data;
+        this.cdRef.detectChanges(); // Força a atualização da view após carregar os dados
+
       },
       error: (err) => console.error('Erro ao carregar dados do seu time', err)
     });

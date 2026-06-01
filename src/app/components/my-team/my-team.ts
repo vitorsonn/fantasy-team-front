@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FantasyTeam } from '../../services/fantasy-team';
 
 @Component({
@@ -13,7 +13,7 @@ export class MyTeam implements OnInit {
   public squad: any[] = [];
   public totalTeamValue: number = 0;
 
-  constructor(private fantasyService: FantasyTeam) { }
+  constructor(private fantasyService: FantasyTeam, private cdRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadTeamData();
@@ -24,6 +24,7 @@ export class MyTeam implements OnInit {
     this.fantasyService.getMyTeamDetails(1).subscribe({
       next: (team) => {
         this.myTeam = team;
+        this.cdRef.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar perfil do time', err)
     });
