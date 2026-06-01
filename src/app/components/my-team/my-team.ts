@@ -33,6 +33,7 @@ export class MyTeam implements OnInit {
       next: (players) => {
         this.squad = players;
         this.calculateTeamValue();
+        this.cdRef.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar elenco', err)
     });
