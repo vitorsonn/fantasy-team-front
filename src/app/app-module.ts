@@ -1,16 +1,26 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import {HttpClientModule} from "@angular/common/http";
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
+import { Market } from './components/market/market';
+import { MyTeam } from './components/my-team/my-team';
+import { Simulation } from './components/simulation/simulation';
+import { RouterModule } from '@angular/router';
+import {routes} from "./app-routing-module";
 
 @NgModule({
   declarations: [
-    App
+    App,
+    Market,
+    MyTeam,
+    Simulation
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    RouterModule.forRoot(routes)
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
