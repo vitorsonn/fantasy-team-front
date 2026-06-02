@@ -41,12 +41,19 @@ public matches: any[] = [];
       next: (response: string) => {
         this.isSimulating = false;
         this.simulationFinished = true;
-        alert(response);
+        this.matches = [];
+        this.cdr.detectChanges();
+
         this.loadMatches();
+
+        setTimeout(() => {
+          alert(response);
+        }, 150);
       },
       error: (err) => {
         this.isSimulating = false;
-        alert('Erro ao rodar simulação: ' + (err.error?.message || 'Verifique o console do servidor Java.'));
+        console.error(err);
+        alert('Erro ao rodar simulação.');
       }
     });
   }

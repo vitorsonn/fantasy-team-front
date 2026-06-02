@@ -1,6 +1,6 @@
-
 <div class="p-6 bg-slate-900 min-h-screen text-white">
 
+  <!-- 🎮 PAINEL DE CONTROLE DA SIMULAÇÃO -->
   <div class="mb-8 p-6 bg-slate-800 rounded-xl border border-slate-700 flex flex-col md:flex-row justify-between items-center gap-4 shadow-md">
     <div>
       <h1 class="text-3xl font-bold text-emerald-400">Simulador de Rodadas</h1>
@@ -24,48 +24,72 @@
     </div>
   </div>
 
+  <!-- 🏆 GRADE DE CONFRONTOS -->
   <div class="max-w-3xl mx-auto flex flex-col gap-4">
     <h3 class="text-lg font-bold text-slate-300 mb-2 flex items-center gap-2">
       <span class="w-2 h-6 bg-emerald-500 rounded-full"></span>
       Calendário de Jogos
     </h3>
 
+    <!-- Card de cada jogo -->
     <div *ngFor="let match of matches"
-      class="bg-slate-800 border border-slate-700 rounded-xl p-5 flex items-center justify-between shadow-sm hover:border-slate-600 transition-all">
+      class="bg-slate-800 border border-slate-700 rounded-xl flex flex-col shadow-sm hover:border-slate-600 transition-all overflow-hidden">
 
-      <div class="w-2/5 flex items-center gap-3 justify-end text-right">
-        <span class="font-semibold text-slate-100 text-base md:text-lg truncate">{{ match.homeTeam?.name }}</span>
-        <div class="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center text-xs font-bold text-slate-400">🏠</div>
+      <!-- LINHA DO PLACAR (Corrigido para match.homeGoals e match.awayGoals) -->
+      <div class="p-5 flex items-center justify-between">
+        <!-- Time Casa -->
+        <div class="w-2/5 flex items-center gap-3 justify-end text-right">
+          <span class="font-semibold text-slate-100 text-base md:text-lg truncate">{{ match.homeTeam?.name }}</span>
+          <div class="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center text-xs font-bold text-slate-400">🏠</div>
+        </div>
+
+        <!-- Placar Central -->
+        <div class="w-1/5 flex justify-center items-center gap-2">
+          <!-- O seu backend usa .homeGoals e .awayGoals -->
+          <ng-container *ngIf="match.homeGoals != null; else pendingMatch">
+            <span class="w-10 h-10 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-center font-mono font-black text-xl text-amber-400">
+              {{ match.homeGoals }}
+            </span>
+            <span class="text-slate-500 font-bold px-1">x</span>
+            <span class="w-10 h-10 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-center font-mono font-black text-xl text-amber-400">
+              {{ match.awayGoals }}
+            </span>
+          </ng-container>
+
+          <ng-template #pendingMatch>
+            <div class="px-3 py-1 bg-slate-900/50 border border-slate-700/50 text-[11px] font-bold text-slate-500 rounded-md tracking-wider uppercase font-mono">
+              VS
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Time Fora -->
+        <div class="w-2/5 flex items-center gap-3 justify-start text-left">
+          <div class="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center text-xs font-bold text-slate-400">✈️</div>
+          <span class="font-semibold text-slate-100 text-base md:text-lg truncate">{{ match.awayTeam?.name }}</span>
+        </div>
       </div>
 
-      <div class="w-1/5 flex justify-center items-center gap-2">
+      <!-- ⚽ GAVETA DE EVENTOS (Adaptada para listar os eventos de forma limpa) -->
+      <div *ngIf="match.homeGoals != null && match.events?.length > 0"
+           class="bg-slate-900/40 border-t border-slate-700/50 px-5 py-3 text-xs text-slate-400 font-mono space-y-2">
 
-        <ng-container *ngIf="match.simulated || match.homeGoals != null; else pendingMatch">
-          <span class="w-10 h-10 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-center font-mono font-black text-xl text-amber-400">
-            {{ match.homeGoals }}
-          </span>
-          <span class="text-slate-500 font-bold px-1">x</span>
-          <span class="w-10 h-10 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-center font-mono font-black text-xl text-amber-400">
-            {{ match.awayGoals }}
-          </span>
-        </ng-container>
-
-        <ng-template #pendingMatch>
-          <div class="px-3 py-1 bg-slate-900/50 border border-slate-700/50 text-[11px] font-bold text-slate-500 rounded-md tracking-wider uppercase font-mono">
-            VS
+        <div *ngFor="let event of match.events" class="flex items-center justify-between py-0.5 border-b border-slate-800/40 last:border-0">
+          <div class="flex items-center gap-2">
+            <span class="text-amber-500 font-bold">{{ event.minute }}'</span>
+            <span class="text-slate-500">[{{ event.eventType }}]</span>
+            <span class="text-slate-200 font-medium">{{ event.player?.name }}</span>
           </div>
-        </ng-template>
-      </div>
+          <!-- Tag discreta indicando que foi um evento desta partida -->
+          <span class="text-[10px] text-slate-500 uppercase">Fato do Jogo</span>
+        </div>
 
-      <div class="w-2/5 flex items-center gap-3 justify-start text-left">
-        <div class="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center text-xs font-bold text-slate-400">✈️</div>
-        <span class="font-semibold text-slate-100 text-base md:text-lg truncate">{{ match.awayTeam?.name }}</span>
       </div>
 
     </div>
 
     <div *ngIf="matches.length === 0" class="text-center py-12 text-slate-500 text-sm">
-      Nenhum confronto foi encontrado para esta rodada no banco de dados. Verifique a carga inicial do Spring Boot.
+      Nenhum confronto foi encontrado para esta rodada.
     </div>
   </div>
 

@@ -8,6 +8,7 @@ import { MyTeam } from './components/my-team/my-team';
 import { Simulation } from './components/simulation/simulation';
 import { RouterModule } from '@angular/router';
 import {routes} from "./app-routing-module";
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import {routes} from "./app-routing-module";
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    FormsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

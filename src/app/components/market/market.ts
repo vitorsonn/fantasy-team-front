@@ -13,8 +13,10 @@ export class Market implements OnInit {
   public teams: any[] = [];
   public myTeam: any = null;
   public selectedPosition: string = 'TODOS';
+  public selectedTeam: string = 'TODOS';
   public searchText: string = '';
-  public itemsToShow: number = 20
+  public itemsToShow: number = 20;
+  public uniqueNationalTeams: string[] = [];
 
   constructor(private fantasyService: FantasyTeam, private cdRef: ChangeDetectorRef) {}
 
@@ -27,17 +29,26 @@ export class Market implements OnInit {
     this.fantasyService.getMarketTeams().subscribe({
       next: (data) => {
         this.teams = data;
-        this.cdRef.detectChanges(); // Força a atualização da view após carregar os dados`
+        this.extractUniqueTeams();
+        this.cdRef.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar mercado', err)
     });
+  }
+
+  extractUniqueTeams(): void {
+    const teamNames = this.teams
+      .map(player => player.team?.name)
+      .filter(name => name != null);
+
+    this.uniqueNationalTeams = Array.from(new Set(teamNames)).sort();
   }
 
   loadMyTeamDetails(): void {
     this.fantasyService.getMyTeamDetails(1).subscribe({
       next: (data) => {
         this.myTeam = data;
-        this.cdRef.detectChanges(); // Força a atualização da view após carregar os dados
+        this.cdRef.detectChanges();
 
       },
       error: (err) => console.error('Erro ao carregar dados do seu time', err)
@@ -71,7 +82,8 @@ export class Market implements OnInit {
     return this.teams.filter(player => {
       const matchPosition = this.selectedPosition === 'TODOS' || player.position === this.selectedPosition;
       const matchName = player.name.toLowerCase().includes(this.searchText);
-      return matchPosition && matchName;
+      const matchTeam = this.selectedTeam === 'TODOS' || (player.team && player.team.name === this.selectedTeam);
+      return matchPosition && matchName && matchTeam;
     });
   }
 
