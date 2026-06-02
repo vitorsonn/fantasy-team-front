@@ -1,10 +1,29 @@
 <div class="p-6 bg-slate-900 min-h-screen text-white">
 
-  <!-- 🎮 PAINEL DE CONTROLE DA SIMULAÇÃO -->
-  <div class="mb-8 p-6 bg-slate-800 rounded-xl border border-slate-700 flex flex-col md:flex-row justify-between items-center gap-4 shadow-md">
+  <div class="mb-8 p-6 bg-slate-800 rounded-xl border border-slate-700 flex flex-col md:flex-row justify-between items-center gap-6 shadow-md">
     <div>
       <h1 class="text-3xl font-bold text-emerald-400">Simulador de Rodadas</h1>
-      <p class="text-slate-400 text-sm mt-1">Veja os confrontos agendados e processe os resultados da Rodada {{ currentRoundId }}.</p>
+      <p class="text-slate-400 text-sm mt-1">Gerencie o calendário, navegue pelas fases e processe os resultados.</p>
+    </div>
+
+    <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl p-1.5 shadow-inner">
+      <button
+        (click)="previousRound()"
+        [disabled]="currentRoundId === 1 || isSimulating"
+        class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-emerald-400">
+        ◀
+      </button>
+
+      <span class="px-6 font-mono font-bold text-lg min-w-[140px] text-center text-slate-100">
+        Rodada {{ currentRoundId }} / {{ totalRounds }}
+      </span>
+
+      <button
+        (click)="nextRound()"
+        [disabled]="currentRoundId === totalRounds || isSimulating"
+        class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-emerald-400">
+        ▶
+      </button>
     </div>
 
     <div>
@@ -12,7 +31,7 @@
         (click)="triggerSimulation()"
         [disabled]="isSimulating"
         [class]="isSimulating ? 'bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-bold'"
-        class="px-6 py-3 rounded-xl shadow-lg transition-all flex items-center gap-3 text-base">
+        class="px-6 py-3 rounded-xl shadow-lg transition-all flex items-center gap-3 text-base w-full md:w-auto justify-center">
 
         <svg *ngIf="isSimulating" class="animate-spin h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -24,29 +43,23 @@
     </div>
   </div>
 
-  <!-- 🏆 GRADE DE CONFRONTOS -->
   <div class="max-w-3xl mx-auto flex flex-col gap-4">
     <h3 class="text-lg font-bold text-slate-300 mb-2 flex items-center gap-2">
       <span class="w-2 h-6 bg-emerald-500 rounded-full"></span>
       Calendário de Jogos
     </h3>
 
-    <!-- Card de cada jogo -->
     <div *ngFor="let match of matches"
       class="bg-slate-800 border border-slate-700 rounded-xl flex flex-col shadow-sm hover:border-slate-600 transition-all overflow-hidden">
 
-      <!-- LINHA DO PLACAR (Corrigido para match.homeGoals e match.awayGoals) -->
       <div class="p-5 flex items-center justify-between">
-        <!-- Time Casa -->
         <div class="w-2/5 flex items-center gap-3 justify-end text-right">
           <span class="font-semibold text-slate-100 text-base md:text-lg truncate">{{ match.homeTeam?.name }}</span>
           <div class="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center text-xs font-bold text-slate-400">🏠</div>
         </div>
 
-        <!-- Placar Central -->
         <div class="w-1/5 flex justify-center items-center gap-2">
-          <!-- O seu backend usa .homeGoals e .awayGoals -->
-          <ng-container *ngIf="match.homeGoals != null; else pendingMatch">
+          <ng-container *ngIf="match.status === 'CONCLUIDA'; else pendingMatch">
             <span class="w-10 h-10 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-center font-mono font-black text-xl text-amber-400">
               {{ match.homeGoals }}
             </span>
@@ -63,33 +76,29 @@
           </ng-template>
         </div>
 
-        <!-- Time Fora -->
         <div class="w-2/5 flex items-center gap-3 justify-start text-left">
           <div class="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center text-xs font-bold text-slate-400">✈️</div>
           <span class="font-semibold text-slate-100 text-base md:text-lg truncate">{{ match.awayTeam?.name }}</span>
         </div>
       </div>
 
-      <!-- ⚽ GAVETA DE EVENTOS (Adaptada para listar os eventos de forma limpa) -->
-      <div *ngIf="match.homeGoals != null && match.events?.length > 0"
+      <div *ngIf="match.status === 'CONCLUIDA' && match.events?.length > 0"
            class="bg-slate-900/40 border-t border-slate-700/50 px-5 py-3 text-xs text-slate-400 font-mono space-y-2">
 
         <div *ngFor="let event of match.events" class="flex items-center justify-between py-0.5 border-b border-slate-800/40 last:border-0">
           <div class="flex items-center gap-2">
             <span class="text-amber-500 font-bold">{{ event.minute }}'</span>
-            <span class="text-slate-500">[{{ event.eventType }}]</span>
+            <span class="text-slate-500">{{ event.eventType }}]</span>
             <span class="text-slate-200 font-medium">{{ event.player?.name }}</span>
           </div>
-          <!-- Tag discreta indicando que foi um evento desta partida -->
           <span class="text-[10px] text-slate-500 uppercase">Fato do Jogo</span>
         </div>
-
       </div>
 
     </div>
 
-    <div *ngIf="matches.length === 0" class="text-center py-12 text-slate-500 text-sm">
-      Nenhum confronto foi encontrado para esta rodada.
+    <div *ngIf="matches && matches.length === 0" class="text-center py-12 text-slate-500 text-sm">
+      Nenhum confronto agendado para a Rodada {{ currentRoundId }}.
     </div>
   </div>
 

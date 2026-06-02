@@ -10,8 +10,11 @@ export class Simulation implements OnInit {
 
 public matches: any[] = [];
   public currentRoundId: number = 1;
+  public totalRounds: number = 5;
   public isSimulating: boolean = false;
   public simulationFinished: boolean = false;
+
+
 
   constructor(
     private simulationService: SimulationService,
@@ -23,14 +26,31 @@ public matches: any[] = [];
   }
 
   loadMatches(): void {
-    this.simulationService.getMatches(this.currentRoundId).subscribe({
-      next: (data) => {
-        this.matches = data;
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error('Erro ao carregar partidas da rodada', err)
-    });
+  this.simulationService.getMatchesByRound(this.currentRoundId).subscribe({
+    next: (data) => {
+      this.matches = data;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Erro ao carregar partidas:', err);
+    }
+  });
+}
+
+
+  nextRound(): void {
+  if (this.currentRoundId < this.totalRounds) {
+    this.currentRoundId++;
+    this.loadMatches();
   }
+}
+
+previousRound(): void {
+  if (this.currentRoundId > 1) {
+    this.currentRoundId--;
+    this.loadMatches();
+  }
+}
 
 
   triggerSimulation(): void {

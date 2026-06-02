@@ -19,4 +19,9 @@ constructor(private http: HttpClient) { }
       responseType: 'text' as 'json'
     });
   }
+
+  getMatchesByRound(roundId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/matches/round/${roundId}`);
+}
+
 }
