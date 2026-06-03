@@ -17,6 +17,7 @@ export class Market implements OnInit {
   public searchText: string = '';
   public itemsToShow: number = 20;
   public uniqueNationalTeams: string[] = [];
+  public currentRoundId: number = 1;
 
   constructor(private fantasyService: FantasyTeam, private cdRef: ChangeDetectorRef) {}
 
@@ -55,11 +56,24 @@ export class Market implements OnInit {
     });
   }
 
+  nextRound(): void {
+  if (this.currentRoundId < 5) {
+    this.currentRoundId++;
+  }
+}
+
+previousRound(): void {
+  if (this.currentRoundId > 1) {
+    this.currentRoundId--;
+  }
+}
+
   buyPlayer(playerId: number): void {
-    const roundId = 1;
-    this.fantasyService.buyPlayer(1, playerId, roundId).subscribe({
+    const roundId = this.currentRoundId;
+    const teamId = 1;
+    this.fantasyService.buyPlayer(teamId, playerId, roundId).subscribe({
       next: (response) => {
-        alert('Jogador comprado com sucesso!');
+        alert('Rodada ' + roundId + ': Jogador comprado com sucesso!');
         this.loadMyTeamDetails();
       },
       error: (err) => {

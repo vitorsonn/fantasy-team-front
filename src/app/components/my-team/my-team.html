@@ -18,6 +18,29 @@
     </div>
   </div>
 
+  <!-- 🔄 SELETOR DE RODADAS DO ELENCO -->
+<div class="mb-6 flex justify-center items-center">
+  <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl p-1.5 shadow-inner">
+    <button
+      (click)="$event.stopPropagation(); previousRound()"
+      [disabled]="currentRoundId === 1"
+      class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-emerald-400">
+      ◀
+    </button>
+
+    <span class="px-6 font-mono font-bold text-sm min-w-[160px] text-center text-slate-100">
+      Elenco da Rodada {{ currentRoundId }}
+    </span>
+
+    <button
+      (click)="$event.stopPropagation(); nextRound()"
+      [disabled]="currentRoundId === totalRounds"
+      class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-emerald-400">
+      ▶
+    </button>
+  </div>
+</div>
+
   <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden shadow-md">
     <div class="p-5 border-b border-slate-700 flex justify-between items-center">
       <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
