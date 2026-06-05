@@ -8,46 +8,93 @@ import { FantasyTeam } from '../../services/fantasy-team';
   styleUrl: './my-team.css',
 })
 export class MyTeam implements OnInit {
-
   public myTeam: any = null;
   public squad: any[] = [];
   public totalTeamValue: number = 0;
 
-  // 🌟 NAVEGAÇÃO DE RODADAS NO ELENCO
   public currentRoundId: number = 1;
   public totalRounds: number = 5;
 
-  constructor(private fantasyService: FantasyTeam, private cdRef: ChangeDetectorRef) { }
+  public goalkeepers: any[] = [];
+  public defenders: any[] = [];
+  public midfielders: any[] = [];
+  public attackers: any[] = [];
+
+  public availableFormations = ['F_433', 'F_442', 'F_352', 'F_343', 'F_451', 'F_541'];
+
+
+  constructor(
+    private fantasyService: FantasyTeam,
+    private cdRef: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.loadTeamData();
   }
 
-  loadTeamData(): void {
-    // 1. Carrega os dados gerais do time (Nome, Patrimônio, Saldo Restante)
-    this.fantasyService.getMyTeamDetails(1).subscribe({
-      next: (team) => {
-        this.myTeam = team;
-        this.cdRef.detectChanges();
-      },
-      error: (err) => console.error('Erro ao carregar perfil do time', err)
-    });
+loadTeamData(): void {
+  this.fantasyService.getMyTeamDetails(1).subscribe({
+    next: (team) => {
+      this.myTeam = team;
+      this.cdRef.detectChanges();
+    },
+    error: (err) => console.error('Erro ao carregar perfil do time', err),
+  });
 
-    // 2. Carrega o elenco passando dinamicamente a rodada selecionada
-    this.loadSquadByRound();
-  }
+  this.loadSquadByRound();
+}
 
-  loadSquadByRound(): void {
-    // Passa o ID do time (1) e a rodada atual para o backend filtrado
-    this.fantasyService.getMySquad(1, this.currentRoundId).subscribe({
-      next: (players) => {
-        this.squad = players;
-        this.calculateTeamValue();
-        this.cdRef.detectChanges();
-      },
-      error: (err) => console.error('Erro ao carregar elenco da rodada ' + this.currentRoundId, err)
-    });
+loadSquadByRound(): void {
+  this.fantasyService.getMySquad(1, this.currentRoundId).subscribe({
+    next: (players) => {
+      this.squad = players;
+      this.calculateTeamValue();
+
+
+      this.goalkeepers = players.filter(item => item.player?.position === 'GOLEIRO');
+      this.defenders = players.filter(item => item.player?.position === 'ZAGUEIRO' || item.player?.position === 'LATERAL');
+      this.midfielders = players.filter(item => item.player?.position === 'MEIA');
+      this.attackers = players.filter(item => item.player?.position === 'ATACANTE');
+
+      this.cdRef.detectChanges();
+    },
+    error: (err) =>
+      console.error('Erro ao carregar elenco da rodada ' + this.currentRoundId, err),
+  });
+}
+
+onFormationChange(event: any): void {
+  const selectedFormation = event.target.value;
+  const teamId = 1;
+
+  this.fantasyService.updateFormation(teamId, selectedFormation, this.currentRoundId).subscribe({
+    next: (updatedTeam) => {
+      this.myTeam.formation = updatedTeam.formation;
+
+
+      this.loadSquadByRound();
+
+      alert(`Formação alterada para ${this.getFormationLabel(updatedTeam.formation)} com sucesso!`);
+    },
+    error: (err) => {
+      alert(err.error || "Não foi possível alterar a formação.");
+
+      event.target.value = this.myTeam.formation;
+    }
+  });
+}
+
+getFormationLabel(formationEnum: string): string {
+  switch (formationEnum) {
+    case 'F_433': return '4-3-3';
+    case 'F_442': return '4-4-2';
+    case 'F_352': return '3-5-2';
+    case 'F_343': return '3-4-3';
+    case 'F_451': return '4-5-1';
+    case 'F_541': return '5-4-1';
+    default: return formationEnum;
   }
+}
 
   previousRound(): void {
     if (this.currentRoundId > 1) {

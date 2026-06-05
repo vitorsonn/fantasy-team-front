@@ -35,4 +35,14 @@ export class FantasyTeam {
     const params = `?teamId=${teamId}&playerId=${playerId}&roundId=${roundId}`;
     return this.http.post<any>(`${this.apiUrl}/buy${params}`, {});
   }
+  getLeaderboard(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/leaderboard`);
+  }
+
+  updateFormation(teamId: number, formation: string, roundId: number): Observable<any> {
+  return this.http.put<any>(
+    `${this.apiUrl}/teams/${teamId}/formation?formation=${formation}&roundId=${roundId}`,
+    {}
+  );
+}
 }

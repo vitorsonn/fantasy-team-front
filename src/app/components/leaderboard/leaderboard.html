@@ -1,0 +1,53 @@
+<div class="p-6 bg-slate-900 min-h-screen text-white flex flex-col items-center">
+
+  <div class="w-full max-w-3xl mb-8 text-center sm:text-left">
+    <h1 class="text-3xl font-bold text-emerald-400">Liga Geral Fantasy</h1>
+    <p class="text-slate-400 text-sm mt-1">Acompanhe a pontuação acumulada e veja quem está dominando o campeonato.</p>
+  </div>
+
+  <div class="w-full max-w-3xl bg-slate-800 border border-slate-700 rounded-xl shadow-lg overflow-hidden">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-slate-900/60 text-slate-400 text-xs font-mono uppercase tracking-wider border-b border-slate-700">
+          <th class="py-4 px-6 text-center w-16">Pos</th>
+          <th class="py-4 px-6">Time</th>
+          <th class="py-4 px-6 text-right">Patrimônio</th>
+          <th class="py-4 px-6 text-right">Pontos Totais</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-700/50">
+        <tr *ngFor="let team of rankingList; let i = index"
+            [class.bg-emerald-500/5]="i === 0"
+            class="hover:bg-slate-700/30 transition-colors">
+
+          <td class="py-4 px-6 text-center">
+            <span *ngIf="i === 0" class="text-xl" title="Líder">🏆</span>
+            <span *ngIf="i > 0" class="font-mono font-bold text-slate-400">{{ i + 1 }}º</span>
+          </td>
+
+          <td class="py-4 px-6">
+            <div class="font-bold text-slate-100 text-base flex items-center gap-2">
+              {{ team.teamName }}
+              <span *ngIf="i === 0" class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-mono">LÍDER</span>
+            </div>
+          </td>
+
+          <td class="py-4 px-6 text-right font-mono text-slate-400">
+            $ {{ team.cash | number:'1.2-2' }}
+          </td>
+
+          <td class="py-4 px-6 text-right">
+            <span class="font-mono font-black text-lg text-amber-400">
+              {{ team.totalPoints | number:'1.1-1' }} pts
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="rankingList.length === 0" class="text-center py-12 text-slate-500 text-sm">
+      Nenhum time participando da liga ainda.
+    </div>
+  </div>
+
+</div>

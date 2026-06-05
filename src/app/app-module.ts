@@ -9,13 +9,15 @@ import { Simulation } from './components/simulation/simulation';
 import { RouterModule } from '@angular/router';
 import {routes} from "./app-routing-module";
 import { FormsModule } from '@angular/forms';
+import { Leaderboard } from './components/leaderboard/leaderboard';
 
 @NgModule({
   declarations: [
     App,
     Market,
     MyTeam,
-    Simulation
+    Simulation,
+    Leaderboard
   ],
   imports: [
     BrowserModule,

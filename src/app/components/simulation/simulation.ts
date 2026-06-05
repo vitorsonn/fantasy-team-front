@@ -58,7 +58,7 @@ previousRound(): void {
     this.simulationFinished = false;
 
     this.simulationService.simulateRound(this.currentRoundId).subscribe({
-      next: (response: string) => {
+      next: (response) => {
         this.isSimulating = false;
         this.simulationFinished = true;
         this.matches = [];

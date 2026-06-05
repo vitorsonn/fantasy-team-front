@@ -1,4 +1,3 @@
-
 <div class="p-6 bg-slate-900 min-h-screen text-white">
 
   <div *ngIf="myTeam" class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -6,95 +5,133 @@
       <p class="text-xs text-slate-400 uppercase tracking-wider font-medium">Nome do Time</p>
       <h2 class="text-2xl font-bold text-emerald-400 mt-1">{{ myTeam.name }}</h2>
     </div>
-
     <div class="p-5 bg-slate-800 rounded-xl border border-slate-700 shadow-sm">
       <p class="text-xs text-slate-400 uppercase tracking-wider font-medium">Valor do Patrimônio</p>
       <h2 class="text-2xl font-bold text-amber-400 mt-1">$ {{ totalTeamValue | number:'1.2-2' }}</h2>
     </div>
-
     <div class="p-5 bg-slate-800 rounded-xl border border-slate-700 shadow-sm">
       <p class="text-xs text-slate-400 uppercase tracking-wider font-medium">Saldo Restante</p>
       <h2 class="text-2xl font-bold text-slate-200 mt-1">$ {{ myTeam.cash | number:'1.2-2' }}</h2>
     </div>
   </div>
 
-  <!-- 🔄 SELETOR DE RODADAS DO ELENCO -->
-<div class="mb-6 flex justify-center items-center">
-  <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl p-1.5 shadow-inner">
-    <button
-      (click)="$event.stopPropagation(); previousRound()"
-      [disabled]="currentRoundId === 1"
-      class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-emerald-400">
-      ◀
-    </button>
-
-    <span class="px-6 font-mono font-bold text-sm min-w-[160px] text-center text-slate-100">
-      Elenco da Rodada {{ currentRoundId }}
-    </span>
-
-    <button
-      (click)="$event.stopPropagation(); nextRound()"
-      [disabled]="currentRoundId === totalRounds"
-      class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-emerald-400">
-      ▶
-    </button>
-  </div>
-</div>
-
-  <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden shadow-md">
-    <div class="p-5 border-b border-slate-700 flex justify-between items-center">
-      <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
-        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-        Jogadores Escalados ({{ squad.length }})
-      </h3>
-    </div>
-
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-slate-700/50 text-slate-400 text-xs uppercase tracking-wider font-semibold">
-            <th class="p-4">Posição</th>
-            <th class="p-4">Jogador</th>
-            <th class="p-4">Seleção</th>
-            <th class="p-4 text-right">Preço Pago</th>
-            <th class="p-4 text-right">Pontos na Rodada</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-700">
-          <tr *ngFor="let item of squad" class="hover:bg-slate-700/30 transition-all text-sm">
-
-            <td class="p-4">
-              <span class="text-xs px-2.5 py-1 bg-slate-900 text-emerald-400 font-mono rounded font-semibold">
-                {{ item.player?.position }}
-              </span>
-            </td>
-
-            <td class="p-4 font-medium text-slate-200">
-              {{ item.player?.name }}
-            </td>
-
-            <td class="p-4 text-slate-400">
-              {{ item.player?.team?.name || 'N/A' }}
-            </td>
-
-            <td class="p-4 text-right font-mono font-bold text-amber-400">
-              $ {{ item.player?.currentPrice | number:'1.2-2' }}
-            </td>
-
-
-            <td class="p-4 text-right font-mono font-black"
-                [ngClass]="item.roundPoints > 0 ? 'text-emerald-400' : 'text-slate-500'">
-              {{ item.roundPoints != null ? (item.roundPoints | number:'1.1-1') : '0.0' }} pts
-            </td>
-
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div *ngIf="squad.length === 0" class="text-center py-12 text-slate-500 text-sm">
-      Você ainda não comprou nenhum jogador para esta rodada. Vá até o Mercado!
+  <div class="mb-6 flex justify-center items-center">
+    <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl p-1.5 shadow-inner">
+      <button (click)="$event.stopPropagation(); previousRound()" [disabled]="currentRoundId === 1" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-emerald-400">◀</button>
+      <span class="px-6 font-mono font-bold text-sm min-w-[160px] text-center text-slate-100">Elenco da Rodada {{ currentRoundId }}</span>
+      <button (click)="$event.stopPropagation(); nextRound()" [disabled]="currentRoundId === totalRounds" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-emerald-400">▶</button>
     </div>
   </div>
 
-</div>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <div class="lg:col-span-7 bg-slate-800 border border-slate-700 rounded-xl overflow-hidden shadow-md">
+      <div class="p-5 border-b border-slate-700 flex justify-between items-center">
+        <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+          <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          Jogadores Escalados ({{ squad.length }})
+        </h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-700/50 text-slate-400 text-xs uppercase tracking-wider font-semibold">
+              <th class="p-4">Posição</th>
+              <th class="p-4">Jogador</th>
+              <th class="p-4">Seleção</th>
+              <th class="p-4 text-right">Preço Pago</th>
+              <th class="p-4 text-right">Pontos</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700">
+            <tr *ngFor="let item of squad" class="hover:bg-slate-700/30 transition-all text-sm">
+              <td class="p-4">
+                <span class="text-xs px-2.5 py-1 bg-slate-900 text-emerald-400 font-mono rounded font-semibold">
+                  {{ item.player?.position }}
+                </span>
+              </td>
+              <td class="p-4 font-medium text-slate-200">{{ item.player?.name }}</td>
+              <td class="p-4 text-slate-400">{{ item.player?.team?.name || 'N/A' }}</td>
+              <td class="p-4 text-right font-mono font-bold text-amber-400">$ {{ item.player?.currentPrice | number:'1.2-2' }}</td>
+              <td class="p-4 text-right font-mono font-black" [ngClass]="item.roundPoints > 0 ? 'text-emerald-400' : 'text-slate-500'">
+                {{ item.roundPoints != null ? (item.roundPoints | number:'1.1-1') : '0.0' }} pts
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="squad.length === 0" class="text-center py-12 text-slate-500 text-sm">
+        Você ainda não comprou nenhum jogador para esta rodada. Vá até o Mercado!
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-md flex flex-col items-center">
+
+      <div class="w-full mb-4 flex justify-between items-center">
+        <h4 class="text-sm font-bold text-slate-300 font-mono uppercase tracking-wide">Esquema Tático</h4>
+
+        <select
+          *ngIf="myTeam"
+          [value]="myTeam.formation"
+          (change)="onFormationChange($event)"
+          class="text-xs px-3 py-1.5 bg-slate-900 text-amber-400 border border-slate-700 font-bold rounded-lg font-mono focus:outline-none focus:border-amber-500 cursor-pointer transition-colors">
+          <option *ngFor="let form of availableFormations" [value]="form">
+            {{ getFormationLabel(form) }}
+          </option>
+        </select>
+      </div>
+
+      <div
+        class="w-full aspect-[3/4] rounded-2xl overflow-hidden relative border-4 border-white/20 shadow-inner"
+        style="background: repeating-linear-gradient(90deg, #166534 0px, #166534 40px, #15803d 40px, #15803d 80px);"
+      >
+        <div class="absolute inset-4 border-2 border-white/30 rounded-sm"></div>
+        <div class="absolute top-1/2 left-4 right-4 border-t-2 border-white/30 -translate-y-1/2"></div>
+        <div class="absolute w-28 h-28 border-2 border-white/30 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute w-2 h-2 bg-white/50 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute top-4 left-1/2 -translate-x-1/2 w-40 h-16 border-2 border-white/30 border-t-0"></div>
+        <div class="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-8 border-2 border-white/30 border-t-0"></div>
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 w-40 h-16 border-2 border-white/30 border-b-0"></div>
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 w-20 h-8 border-2 border-white/30 border-b-0"></div>
+
+        <div class="absolute top-10 inset-x-0 flex justify-around px-4 z-10">
+          <div *ngFor="let item of attackers" class="flex flex-col items-center text-center max-w-[80px]">
+            <div class="w-12 h-12 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center shadow-lg shadow-black/40 text-lg">👕</div>
+            <span class="mt-1 text-[10px] font-bold bg-slate-950/90 px-1.5 py-0.5 rounded truncate w-full border border-slate-800">{{ item.player?.name }}</span>
+            <span class="text-[9px] font-black text-amber-300">{{ item.roundPoints != null ? item.roundPoints : '0.0' }} pts</span>
+          </div>
+          <div *ngIf="attackers.length === 0" class="text-[11px] text-emerald-200/50 italic py-2">Nenhum Atacante</div>
+        </div>
+
+        <div class="absolute top-[42%] inset-x-0 flex justify-around px-4 z-10">
+          <div *ngFor="let item of midfielders" class="flex flex-col items-center text-center max-w-[80px]">
+            <div class="w-12 h-12 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center shadow-lg shadow-black/40 text-lg">👕</div>
+            <span class="mt-1 text-[10px] font-bold bg-slate-950/90 px-1.5 py-0.5 rounded truncate w-full border border-slate-800">{{ item.player?.name }}</span>
+            <span class="text-[9px] font-black text-amber-300">{{ item.roundPoints != null ? item.roundPoints : '0.0' }} pts</span>
+          </div>
+          <div *ngIf="midfielders.length === 0" class="text-[11px] text-emerald-200/50 italic py-2">Nenhum Meia</div>
+        </div>
+
+        <div class="absolute bottom-[22%] inset-x-0 flex justify-around px-4 z-10">
+          <div *ngFor="let item of defenders" class="flex flex-col items-center text-center max-w-[80px]">
+            <div class="w-12 h-12 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center shadow-lg shadow-black/40 text-lg">👕</div>
+            <span class="mt-1 text-[10px] font-bold bg-slate-950/90 px-1.5 py-0.5 rounded truncate w-full border border-slate-800">{{ item.player?.name }}</span>
+            <span class="text-[9px] font-black text-amber-300">{{ item.roundPoints != null ? item.roundPoints : '0.0' }} pts</span>
+          </div>
+          <div *ngIf="defenders.length === 0" class="text-[11px] text-emerald-200/50 italic py-2">Nenhum Defensor</div>
+        </div>
+
+        <div class="absolute bottom-6 inset-x-0 flex justify-center z-10">
+          <div *ngFor="let item of goalkeepers" class="flex flex-col items-center text-center max-w-[80px]">
+            <div class="w-12 h-12 rounded-full bg-amber-500 border-2 border-slate-950 flex items-center justify-center shadow-lg shadow-black/40 text-lg">🧤</div>
+            <span class="mt-1 text-[10px] font-bold bg-slate-950/90 px-1.5 py-0.5 rounded truncate w-full border border-slate-800">{{ item.player?.name }}</span>
+            <span class="text-[9px] font-black text-amber-300">{{ item.roundPoints != null ? item.roundPoints : '0.0' }} pts</span>
+          </div>
+          <div *ngIf="goalkeepers.length === 0" class="text-[11px] text-emerald-200/50 italic">Nenhum Goleiro</div>
+        </div>
+
+      </div> </div> </div> </div> ```
+
+---
+
