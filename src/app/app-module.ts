@@ -10,6 +10,8 @@ import { RouterModule } from '@angular/router';
 import {routes} from "./app-routing-module";
 import { FormsModule } from '@angular/forms';
 import { Leaderboard } from './components/leaderboard/leaderboard';
+import { Notifications } from './components/notifications/notifications';
+import { Navbar } from './components/navbar/navbar';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,9 @@ import { Leaderboard } from './components/leaderboard/leaderboard';
     Market,
     MyTeam,
     Simulation,
-    Leaderboard
+    Leaderboard,
+    Notifications,
+    Navbar
   ],
   imports: [
     BrowserModule,
