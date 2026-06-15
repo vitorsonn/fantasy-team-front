@@ -1,6 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FantasyTeam } from '../../services/fantasy-team';
-
+import { FantasyTeamDetails, Player, PositionFilter } from '../../models/fantasy.models';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-market',
@@ -10,16 +12,20 @@ import { FantasyTeam } from '../../services/fantasy-team';
 })
 export class Market implements OnInit {
 
-  public teams: any[] = [];
-  public myTeam: any = null;
-  public selectedPosition: string = 'TODOS';
+  public teams: Player[] = [];
+  public myTeam: FantasyTeamDetails | null = null;
+  public selectedPosition: PositionFilter = 'TODOS';
   public selectedTeam: string = 'TODOS';
   public searchText: string = '';
   public itemsToShow: number = 20;
   public uniqueNationalTeams: string[] = [];
   public currentRoundId: number = 1;
 
-  constructor(private fantasyService: FantasyTeam, private cdRef: ChangeDetectorRef) {}
+  constructor(
+    private fantasyService: FantasyTeam,
+    private cdRef: ChangeDetectorRef,
+    private notifications: NotificationService,
+  ) {}
 
   ngOnInit(): void {
     this.loadMarketData();
@@ -40,7 +46,7 @@ export class Market implements OnInit {
   extractUniqueTeams(): void {
     const teamNames = this.teams
       .map(player => player.team?.name)
-      .filter(name => name != null);
+      .filter((name): name is string => name != null);
 
     this.uniqueNationalTeams = Array.from(new Set(teamNames)).sort();
   }
@@ -72,18 +78,19 @@ previousRound(): void {
     const roundId = this.currentRoundId;
     const teamId = 1;
     this.fantasyService.buyPlayer(teamId, playerId, roundId).subscribe({
-      next: (response) => {
-        alert('Rodada ' + roundId + ': Jogador comprado com sucesso!');
+      next: () => {
+        this.notifications.success(`Rodada ${roundId}: jogador comprado com sucesso!`);
         this.loadMyTeamDetails();
       },
-      error: (err) => {
-        alert('Erro ao comprar: ' + (err.error?.message || 'Saldo insuficiente ou jogador já comprado'));
+      error: (err: HttpErrorResponse) => {
+        const message = err.error?.message || 'Saldo insuficiente ou jogador ja comprado';
+        this.notifications.error(message, 'Erro ao comprar');
       }
     });
   }
 
-  onSearchChange(event: any): void {
-    this.searchText = event.target.value.toLowerCase();
+  onSearchChange(event: Event): void {
+    this.searchText = (event.target as HTMLInputElement).value.toLowerCase();
     this.itemsToShow = 20;
   }
 
@@ -92,7 +99,7 @@ previousRound(): void {
   }
 
 
-  get filteredPlayers(): any[] {
+  get filteredPlayers(): Player[] {
     return this.teams.filter(player => {
       const matchPosition = this.selectedPosition === 'TODOS' || player.position === this.selectedPosition;
       const matchName = player.name.toLowerCase().includes(this.searchText);

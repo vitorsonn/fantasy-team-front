@@ -1,5 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FantasyTeam } from '../../services/fantasy-team';
+import { FantasyTeamDetails, Formation, SquadItem } from '../../models/fantasy.models';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-my-team',
@@ -8,24 +11,25 @@ import { FantasyTeam } from '../../services/fantasy-team';
   styleUrl: './my-team.css',
 })
 export class MyTeam implements OnInit {
-  public myTeam: any = null;
-  public squad: any[] = [];
+  public myTeam: FantasyTeamDetails | null = null;
+  public squad: SquadItem[] = [];
   public totalTeamValue: number = 0;
 
   public currentRoundId: number = 1;
   public totalRounds: number = 5;
 
-  public goalkeepers: any[] = [];
-  public defenders: any[] = [];
-  public midfielders: any[] = [];
-  public attackers: any[] = [];
+  public goalkeepers: SquadItem[] = [];
+  public defenders: SquadItem[] = [];
+  public midfielders: SquadItem[] = [];
+  public attackers: SquadItem[] = [];
 
-  public availableFormations = ['F_433', 'F_442', 'F_352', 'F_343', 'F_451', 'F_541'];
+  public availableFormations: Formation[] = ['F_433', 'F_442', 'F_352', 'F_343', 'F_451', 'F_541'];
 
 
   constructor(
     private fantasyService: FantasyTeam,
     private cdRef: ChangeDetectorRef,
+    private notifications: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -63,23 +67,30 @@ loadSquadByRound(): void {
   });
 }
 
-onFormationChange(event: any): void {
-  const selectedFormation = event.target.value;
+onFormationChange(event: Event): void {
+  const target = event.target as HTMLSelectElement;
+  const selectedFormation = target.value as Formation;
   const teamId = 1;
 
   this.fantasyService.updateFormation(teamId, selectedFormation, this.currentRoundId).subscribe({
     next: (updatedTeam) => {
-      this.myTeam.formation = updatedTeam.formation;
+      if (this.myTeam) {
+        this.myTeam.formation = updatedTeam.formation;
+      }
 
 
       this.loadSquadByRound();
 
-      alert(`Formação alterada para ${this.getFormationLabel(updatedTeam.formation)} com sucesso!`);
+      this.notifications.success(
+        `Formacao alterada para ${this.getFormationLabel(updatedTeam.formation)} com sucesso!`,
+      );
     },
-    error: (err) => {
-      alert(err.error || "Não foi possível alterar a formação.");
+    error: (err: HttpErrorResponse) => {
+      this.notifications.error(err.error || 'Nao foi possivel alterar a formacao.');
 
-      event.target.value = this.myTeam.formation;
+      if (this.myTeam) {
+        target.value = this.myTeam.formation;
+      }
     }
   });
 }

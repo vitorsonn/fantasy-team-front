@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FantasyTeam } from '../../services/fantasy-team';
+import { LeaderboardItem } from '../../models/fantasy.models';
 
 @Component({
   selector: 'app-leaderboard',
@@ -8,7 +9,7 @@ import { FantasyTeam } from '../../services/fantasy-team';
   styleUrl: './leaderboard.css'
 })
 export class Leaderboard implements OnInit {
-  public rankingList: any[] = [];
+  public rankingList: LeaderboardItem[] = [];
 
   constructor(private fantasyService: FantasyTeam, private cdr: ChangeDetectorRef) {}
 

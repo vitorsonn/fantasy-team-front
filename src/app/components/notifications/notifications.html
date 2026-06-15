@@ -1,0 +1,33 @@
+<div
+  class="fixed right-4 top-20 z-[100] flex w-[calc(100vw-2rem)] max-w-sm flex-col gap-3 pointer-events-none"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  <div
+    *ngFor="let notification of notifications$ | async; trackBy: trackById"
+    class="pointer-events-auto flex items-start gap-3 rounded-xl border p-4 shadow-2xl shadow-black/30 backdrop-blur-md animate-toast-in"
+    [ngClass]="getContainerClass(notification.type)"
+    role="status"
+  >
+    <div
+      class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black"
+      [ngClass]="getBadgeClass(notification.type)"
+    >
+      {{ getBadgeText(notification.type) }}
+    </div>
+
+    <div class="min-w-0 flex-1">
+      <p class="text-sm font-bold leading-5">{{ notification.title }}</p>
+      <p class="mt-0.5 text-sm leading-5 opacity-90">{{ notification.message }}</p>
+    </div>
+
+    <button
+      type="button"
+      class="-mr-1 -mt-1 rounded-lg px-2 py-1 text-lg leading-none opacity-70 transition hover:bg-white/10 hover:opacity-100"
+      (click)="dismiss(notification.id)"
+      aria-label="Fechar notificacao"
+    >
+      x
+    </button>
+  </div>
+</div>

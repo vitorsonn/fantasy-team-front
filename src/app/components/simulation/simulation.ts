@@ -1,5 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { SimulationService } from '../../services/simulation-service';
+import { Match } from '../../models/fantasy.models';
+import { NotificationService } from '../../services/notification.service';
 @Component({
   selector: 'app-simulation',
   standalone: false,
@@ -8,7 +11,7 @@ import { SimulationService } from '../../services/simulation-service';
 })
 export class Simulation implements OnInit {
 
-public matches: any[] = [];
+  public matches: Match[] = [];
   public currentRoundId: number = 1;
   public totalRounds: number = 5;
   public isSimulating: boolean = false;
@@ -18,7 +21,8 @@ public matches: any[] = [];
 
   constructor(
     private simulationService: SimulationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private notifications: NotificationService,
   ) { }
 
   ngOnInit(): void {
@@ -66,14 +70,14 @@ previousRound(): void {
 
         this.loadMatches();
 
-        setTimeout(() => {
-          alert(response);
+        window.setTimeout(() => {
+          this.notifications.success(response, 'Simulacao concluida');
         }, 150);
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         this.isSimulating = false;
         console.error(err);
-        alert('Erro ao rodar simulação.');
+        this.notifications.error('Erro ao rodar simulacao.');
       }
     });
   }

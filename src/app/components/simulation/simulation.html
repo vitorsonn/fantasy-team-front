@@ -89,7 +89,7 @@
       </div>
 
       <!-- ⚽ GAVETA DE EVENTOS MODERNA (COM CARTÕES VISUAIS) -->
-      <div *ngIf="match.status === 'CONCLUIDA' && match.events?.length > 0"
+      <div *ngIf="match.status === 'CONCLUIDA' && (match.events?.length ?? 0) > 0"
            class="bg-slate-900/40 border-t border-slate-700/50 px-5 py-3 text-xs text-slate-400 font-mono space-y-2">
 
         <div *ngFor="let event of match.events" class="flex items-center justify-between py-1 border-b border-slate-800/40 last:border-0">
