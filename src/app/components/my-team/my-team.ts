@@ -126,4 +126,24 @@ getFormationLabel(formationEnum: string): string {
       return sum + (item.player?.currentPrice || 0);
     }, 0);
   }
+
+  removePlayer(playerId: number): void {
+  const teamId = 1;
+
+  if (confirm("Tem certeza que deseja remover este jogador do seu elenco?")) {
+    this.fantasyService.sellPlayer(teamId, playerId, this.currentRoundId).subscribe({
+      next: (msg) => {
+        this.notifications.success(msg || 'Jogador removido do elenco com sucesso!');
+        this.loadTeamData();
+      },
+      error: (err: HttpErrorResponse) => {
+        const message = typeof err.error === 'string'
+          ? err.error
+          : err.error?.message || 'Erro ao remover jogador.';
+
+        this.notifications.error(message, 'Erro ao remover');
+      }
+    });
+  }
+}
 }

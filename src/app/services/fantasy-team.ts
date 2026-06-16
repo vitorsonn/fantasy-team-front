@@ -47,4 +47,11 @@ export class FantasyTeam {
       {},
     );
   }
+
+  sellPlayer(teamId: number, playerId: number, roundId: number): Observable<string> {
+  return this.http.delete<string>(
+    `${this.apiUrl}/teams/${teamId}/sell-player?playerId=${playerId}&roundId=${roundId}`,
+    { responseType: 'text' as 'json' }
+  );
+}
 }
