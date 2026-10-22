@@ -7,7 +7,7 @@ import { Match } from '../models/fantasy.models';
   providedIn: 'root',
 })
 export class SimulationService {
-  private apiUrl = 'http://localhost:8080/api/simulation';
+  private apiUrl = 'https://fantasy-back-47h0.onrender.com/api/simulation';
 
   constructor(private http: HttpClient) { }
 

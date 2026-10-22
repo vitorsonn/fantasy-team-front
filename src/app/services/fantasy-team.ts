@@ -13,7 +13,7 @@ import {
   providedIn: 'root',
 })
 export class FantasyTeam {
-  private apiUrl = 'http://localhost:8080/api/market';
+  private apiUrl = 'https://fantasy-back-47h0.onrender.com/api/market';
 
   constructor(private http: HttpClient) {}
 
